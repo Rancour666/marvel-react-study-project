@@ -24,10 +24,7 @@ class MarvelService {
 		return this._transformCharacter(res.data.results[0])
 	}
 
-	//getCharacterComicses = async (id) => {
-	//	const res = await this.getResource(`${this._apiBase}characters/${id}/comics?${this._apiKey}`)
-	//	return res.data.results.map(comics => this._transformComics(comics))
-	//}
+
 
 	_transformCharacter = (char) => {
 		return {
@@ -40,14 +37,6 @@ class MarvelService {
 			comicses: char.comics.items
 		}
 	}
-
-	//_transformComics = (comics) => {
-	//	return {
-	//		title: comics.title,
-	//		id: comics.id
-	//	}
-	//}
-
 
 }
 

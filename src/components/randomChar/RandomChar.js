@@ -2,7 +2,9 @@ import { Component } from 'react';
 
 import './randomChar.scss';
 //import thor from '../../resources/img/thor.jpeg';
-import mjolnir from '../../resources/img/mjolnir.png';
+//import mjolnir from '../../resources/img/mjolnir.png';
+
+
 
 import Spinner from '../spinner/Spinner';
 import Error from '../errorMessage/ErrorMessage';
@@ -92,7 +94,7 @@ class RandomChar extends Component {
 	                <button onClick={this.updateCharacter} className="button button__main">
 	                    <div className="inner">try it</div>
 	                </button>
-	                <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
+	                <img src={process.env.PUBLIC_URL + './images/mjolnir.png'} alt="mjolnir" className="randomchar__decoration"/>
 	            </div>
 	        </div>
 	    )

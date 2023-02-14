@@ -6,7 +6,7 @@ import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 
-import decoration from '../../resources/img/vision.png';
+//import decoration from '../../resources/img/vision.png';
 
 
 
@@ -14,6 +14,7 @@ import decoration from '../../resources/img/vision.png';
 
 
 class App extends Component {
+
 	state ={
 		selectedChar: null
 	}
@@ -27,7 +28,7 @@ class App extends Component {
 	}
 
 	render(){
-
+		
 		return (
 			<div className="app">
 				<AppHeader/>
@@ -46,7 +47,11 @@ class App extends Component {
 								<CharInfo charId={this.state.selectedChar}/>
 							</ErrorBoundary>
 					</div>
-					<img className="bg-decoration" src={decoration} alt="vision"/>
+					<img
+						className="bg-decoration"
+						//src={decoration}
+						src={process.env.PUBLIC_URL + './images/vision.png'}
+						alt="vision"/>
 				 </main>
 			</div>
 	  )
