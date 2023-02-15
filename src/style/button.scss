@@ -10,6 +10,7 @@
     border: none;
     background-color: transparent;
     cursor: pointer;
+	 transition: all 0.3s ease 0s;
     &__long {
         display: block;
         width: 170px;
@@ -89,6 +90,6 @@
         transform: translateY(-5px);
     }
 	 &:disabled {
-		filter: grayscale(0.5);
+		opacity: 0.5;
 	 }
 }

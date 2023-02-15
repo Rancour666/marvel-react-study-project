@@ -18,8 +18,9 @@ class CharList extends Component {
 		chars:[],
 		loading: true,
 		error: false,
-		offset:220,
-		newCharsLoading: false,
+		offset:0,
+		newCharsLoadingUp: false,
+		newCharsLoadingDown: false,
 		charEnded: false
 	}
 
@@ -33,28 +34,67 @@ class CharList extends Component {
 
 
 
+	offsetUp = (offset) => {
+		this.onNewCharListLoadingUp()
+		
+		this.setState(({offset}) => ({
+			offset: offset + 9,
+		}))
+		let newOffset = offset + 9;
+		this.onRequest(newOffset)
+	}
+
+	offsetDown = (offset) => {
+		this.onNewCharListLoadingDown()
+
+		this.setState(({offset}) => ({
+			offset: offset - 9,
+		}))
+
+		let newOffset = offset - 9;
+		if(newOffset < 0) {
+			newOffset = 0;
+			this.setState({
+				offset: 0,
+			})
+		}
+		this.onRequest(newOffset)
+	}
+
 	onRequest = (offset) => {
-		this.onNewCharListLoading()
+		
+
 		this.marvelService
 			.getAllCharacters(offset)
 			.then(this.onCharListLoaded)
 			.catch(this.onError)
 	}
 
-	onCharListLoaded = (newCharList) => {
 
-		this.setState(({chars, offset}) => ({
-			chars:[...chars, ...newCharList],
+	onCharListLoaded = (newCharList) => {
+		this.setState({
+			chars:[ ...newCharList],
 			loading:false,
-			newCharsLoading:false,
-			offset: offset + 9,
+			newCharsLoadingUp:false,
+			newCharsLoadingDown:false,
 			charEnded: newCharList.length < 9 ? true : false
-		}))
+		})
 	}
 
-	onNewCharListLoading = () => {
+
+
+
+
+	onNewCharListLoadingUp = () => {
 		this.setState({
-			newCharsLoading:true
+			newCharsLoadingUp:true,
+			newCharsLoadingDown:false
+		})
+	}
+	onNewCharListLoadingDown = () => {
+		this.setState({
+			newCharsLoadingDown:true,
+			newCharsLoadingUp:false,
 		})
 	}
 
@@ -127,9 +167,8 @@ class CharList extends Component {
 
 
 	render(){
-		const {chars, loading, error, offset, newCharsLoading, charEnded} = this.state
+		const {chars, loading, error, offset, newCharsLoadingUp, newCharsLoadingDown, charEnded} = this.state
 
-		
 		const charList = this.renderList(chars)
 
 		const spinner = loading ? <Spinner/> : null;
@@ -145,9 +184,24 @@ class CharList extends Component {
 				{spinner}
 				{errorMessage}
 				{charListContent}
-				 <button style ={{'display': charEnded ? 'none' : 'block' }} disabled={newCharsLoading} onClick={() => this.onRequest(offset)} className="button button__main button__long">
-					  <div className="inner">load more</div>
-				 </button>
+				<div style ={{'display': 'flex' }}>
+					<button
+						style ={{'display': offset ? 'block' : 'none' }}
+						disabled={newCharsLoadingDown}
+						onClick={() => this.offsetDown(offset)}
+						className="button button__secondary button__long">
+						<div className="inner">load prev</div>
+					</button>
+					<button
+						style ={{'display': charEnded ? 'none' : 'block' }}
+						disabled={newCharsLoadingUp}
+						onClick={() => this.offsetUp(offset)}
+						className="button button__main button__long">
+						<div className="inner">load next</div>
+					</button>
+					
+				</div>
+				
 			</div>
 		)
 	}
