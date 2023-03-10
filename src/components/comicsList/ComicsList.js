@@ -1,71 +1,125 @@
+import { useState, useEffect} from 'react';
+import { Link } from 'react-router-dom';
+
+
+import useMarvelService from "../../services/MarvelService";
+
+import Spinner from '../spinner/Spinner';
+import Error from '../errorMessage/ErrorMessage';
+
+
 import './comicsList.scss';
+
 import uw from '../../resources/img/UW.png';
 import xMen from '../../resources/img/x-men.png';
 
-const ComicsList = () => {
-    return (
-        <div className="comics__list">
-            <ul className="comics__grid">
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-            </ul>
-            <button className="button button__main button__long">
-                <div className="inner">load more</div>
-            </button>
+const ComicsList = (props) => {
+
+	const [comicses, setComicses] = useState([]);
+
+	const [offset, setOffset] = useState(0);
+	const [newComicsesLoading, setNewComicsesLoading] = useState(false);
+	const [comicsesEnded, setComicsesEnded] = useState(false);
+
+
+
+	const {loading, error, getAllComicses, clearError} = useMarvelService();
+
+	useEffect(()=>{
+		onRequest()
+	},[])
+
+	const offsetChange = (offset, e) =>{
+		let offsetStep;
+		let newOffset;
+
+		setNewComicsesLoading(!newComicsesLoading);
+		if(e.currentTarget.id === 'nextComics'){
+			
+			offsetStep = 8
+		}
+		if(e.currentTarget.id === 'prevComics'){
+
+			offsetStep = -8
+		}
+
+		newOffset = offset + offsetStep;
+		setOffset(newOffset);
+		
+		if(newOffset < 0) {
+			newOffset = 0;
+			setOffset(0);
+		}
+
+		onRequest(newOffset);
+
+	}
+
+
+
+
+	const onRequest = (offset) => {
+		clearError();
+		getAllComicses(offset)
+			.then(onComicsesListLoaded)
+
+	}
+
+	const onComicsesListLoaded = (newComicsesList) => {
+		setComicses([ ...newComicsesList]);
+		setNewComicsesLoading(false);
+		setComicsesEnded(newComicsesList.length < 8 ? true : false);
+	}
+
+	const renderComicsesList = (comicses) =>{
+		const comicsesList = comicses.map(comics => {
+			return (
+						<li className="comics__item" key={comics.id} tabIndex ={0}>
+							<Link to={`/comics/${comics.id}`}>
+								<img src={comics.thumbnail} alt="ultimate war" className="comics__item-img"/>
+								<div className="comics__item-name">{comics.name}</div>
+								<div className="comics__item-price">{comics.price ? comics.price + '$' : 'NOT AVAILABLE'}</div>
+							</Link>
+						</li>
+			)
+		})
+
+		return (
+			<ul className="comics__grid">
+				{comicsesList}
+			</ul>
+		)
+	}
+
+
+	const comicsesList = renderComicsesList(comicses);
+	const spinner = loading && !newComicsesLoading ? <Spinner/> : null;
+	const errorMessage = error ? <Error/> : null;
+
+
+	return (
+		<div className="comics__list">
+			{spinner}
+			{errorMessage}
+			{comicsesList}
+			<div style ={{'display': 'flex','justifyContent': 'center' }}>
+				<button
+					style ={{'display': offset ? 'block' : 'none', 'margin':'45px 30px 0px 30px' }}
+					id='prevComics'
+					disabled={newComicsesLoading}
+					onClick={(e) => offsetChange(offset,e)}
+					className="button button__secondary button__long">
+					<div className="inner">load prev</div>
+				</button>
+				<button
+					style ={{'display': comicsesEnded ? 'none' : 'block', 'margin':'45px 30px 0px 30px' }}
+					id='nextComics'
+					disabled={newComicsesLoading}
+					onClick={(e) => offsetChange(offset,e)}
+					className="button button__main button__long">
+					<div className="inner">load next</div>
+				</button>
+			</div>
         </div>
     )
 }

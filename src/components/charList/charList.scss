@@ -13,6 +13,7 @@
         grid-template-columns: repeat(3, 200px);
         column-gap: 25px;
         row-gap: 30px;
+		  
     }
     &__item {
         width: 200px;
@@ -28,16 +29,41 @@
             object-fit: cover;
             transform: translate(-15px, -15px);
         }
-        &_selected {
-				outline: none;
-            box-shadow: 0 5px 20px $main-color;
-            transform: translateY(-8px);
-        }
+
+
+		&-enter {
+			opacity: 0;
+			//visibility: visible;
+
+			transform: translate(-20px, -20px);
+	  }
+	  &-enter-active {
+			opacity: 0.3;
+			transform: translate(-10px, -10px);
+			transition:all 500ms ease;
+	  }
+	  &-enter-done {
+			opacity: 1;
+			transform: translate(0px, 0px);
+			transition:all 500ms ease;
+	  }
+// 	  &-exit {
+// 		display: none;
+// 	  }
+// 	  &-exit-active {
+// 		display: none;
+// 	  }
+// 	  &-exit-done {
+// 		display: block;
+//   }
+
+
+
     }
 	&__item:focus {
 		outline: none;
 		box-shadow: 0 5px 20px $main-color;
-     transform: translateY(-8px);
+		transform: translateY(-8px);
 	}
     &__name {
         font-weight: bold;
@@ -47,3 +73,4 @@
         color: #fff;
     }
 }
+

@@ -1,7 +1,8 @@
-import { Component } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes  from 'prop-types';
+import { CSSTransition, SwitchTransition, TransitionGroup } from 'react-transition-group';
 
-import MarvelService from "../../services/MarvelService";
+import useMarvelService from "../../services/MarvelService";
 import Spinner from '../spinner/Spinner';
 import Error from '../errorMessage/ErrorMessage';
 
@@ -13,205 +14,153 @@ import './charList.scss';
 
 
 
-class CharList extends Component {
-	state = {
-		chars:[],
-		loading: true,
-		error: false,
-		offset:0,
-		newCharsLoadingUp: false,
-		newCharsLoadingDown: false,
-		charEnded: false
-	}
+const CharList = (props) => {
 
+	const [chars, setChars] = useState([]);
 
+	const [offset, setOffset] = useState(0);
+	const [newCharsLoading, setNewCharsLoading] = useState(false);
+	const [charEnded, setCharEnded] = useState(false);
 
-	marvelService = new MarvelService();
+	const {loading, error, getAllCharacters, clearError} = useMarvelService();
 
-	componentDidMount(){
-		this.onRequest()
-	}
+	useEffect(()=>{
+		onRequest()
+	},[])
 
+	const offsetChange = (offset, e) =>{
+		let offsetStep;
+		let newOffset;
 
+		setNewCharsLoading(!newCharsLoading);
+		if(e.currentTarget.id === 'next'){
+			
+			offsetStep = 9
+		}
+		if(e.currentTarget.id === 'prev'){
 
-	offsetUp = (offset) => {
-		this.onNewCharListLoadingUp()
+			offsetStep = -9
+		}
+
+		newOffset = offset + offsetStep;
+		setOffset(newOffset);
 		
-		this.setState(({offset}) => ({
-			offset: offset + 9,
-		}))
-		let newOffset = offset + 9;
-		this.onRequest(newOffset)
-	}
-
-	offsetDown = (offset) => {
-		this.onNewCharListLoadingDown()
-
-		this.setState(({offset}) => ({
-			offset: offset - 9,
-		}))
-
-		let newOffset = offset - 9;
 		if(newOffset < 0) {
 			newOffset = 0;
-			this.setState({
-				offset: 0,
-			})
+			setOffset(0);
 		}
-		this.onRequest(newOffset)
+
+		onRequest(newOffset);
+
 	}
 
-	onRequest = (offset) => {
-		
+	const onRequest = (offset) => {
+		clearError();
+		getAllCharacters(offset)
+			.then(onCharListLoaded)
 
-		this.marvelService
-			.getAllCharacters(offset)
-			.then(this.onCharListLoaded)
-			.catch(this.onError)
 	}
 
-
-	onCharListLoaded = (newCharList) => {
-		this.setState({
-			chars:[ ...newCharList],
-			loading:false,
-			newCharsLoadingUp:false,
-			newCharsLoadingDown:false,
-			charEnded: newCharList.length < 9 ? true : false
-		})
+	const onCharListLoaded = (newCharList) => {
+		setChars([ ...newCharList]);
+		setNewCharsLoading(false);
+		setCharEnded(newCharList.length < 9 ? true : false);
 	}
 
+	const itemRefs = useRef([]);
 
-
-
-
-	onNewCharListLoadingUp = () => {
-		this.setState({
-			newCharsLoadingUp:true,
-			newCharsLoadingDown:false
-		})
-	}
-	onNewCharListLoadingDown = () => {
-		this.setState({
-			newCharsLoadingDown:true,
-			newCharsLoadingUp:false,
-		})
-	}
-
-	onCharLoading = () => {
-		this.setState({
-			loading:true
-		})
-	}
-	onError = () => {
-		this.setState({
-			loading:false,
-			error: true
-		})
+	const onFocus = (id)=>{
+		itemRefs.current.forEach(item => item.classList.remove('char__item_selected'))
+		itemRefs.current[id].classList.add('char__item_selected');
+		itemRefs.current[id].focus();
 	}
 
 
 
-	
-
-	//setItemRef = (elem) => {
-	//	this.itemRefs = elem 
-	//}
-//
-	//onFocus = (e)=>{
-//
-	//	document.querySelectorAll('.char__item').forEach(item => item.classList.remove('char__item_selected'))
-	//	e.currentTarget.classList.add('char__item_selected');
-	//	e.currentTarget.focus();
-	//}
-
-
-	renderList(chars){
-
-		const charList = chars.map((char) => {
+	const renderList = (chars) =>{
+		const charList = chars.map((char, i) => {
 			const thumbStyle = char.thumbnail.includes('image_not_available') ? {objectFit:'contain'} : null;
-
+			const delay = 300 + i*75;
 			return (
-				<li
-					onFocus={(e) => {
-						this.props.onCharSelected(char.id);
-						//this.onFocus(e)
-					}}
-					ref={this.setItemRef}
-					key={char.id}
-					tabIndex ={0}
-					onKeyDown={(e) => {
-						
-						if (e.key === ' ' || e.key === "Enter") {
-							if(e.key === ' '){
-								e.preventDefault();
-							}
-							this.props.onCharSelected(char.id);
-							//this.onFocus(e)
-						}
-					}}
-					className="char__item">
-					<img style={thumbStyle} src={char.thumbnail} alt="abyss"/>
-					<div className="char__name">{char.name}</div>
-				</li>
+				<SwitchTransition mode='out-in'>
+					<CSSTransition key={char.id} timeout={delay} classNames={"char__item"} mountOnEnter>
+						<li
+							ref={(el) => (itemRefs.current[i] = el)}
+							tabIndex ={0}
+							//style={{'transition':`all ${delay}ms ease`}}
+							onClick={() => {
+								props.onCharSelected(char.id);
+								onFocus(i)
+							}}
+							onKeyDown={(e) => {
+								if (e.key === ' ' || e.key === "Enter") {
+									if(e.key === ' '){
+										e.preventDefault();
+									}
+									props.onCharSelected(char.id);
+									onFocus(i)
+								}
+							}}
+							className="char__item">
+							<img
+								style={thumbStyle}
+								src={char.thumbnail}
+								alt="abyss"/>
+							<div className="char__name">{char.name}</div>
+
+						</li>
+					</CSSTransition>
+					</SwitchTransition>
 			)
 		})
-		
 		return (
-			<ul className="char__grid">
+			<TransitionGroup component={'ul'}  className="char__grid">
 				{charList}
-			</ul>
+			</TransitionGroup>
 		)
-
 	}
 
+	const charList = renderList(chars)
 
-	render(){
-		const {chars, loading, error, offset, newCharsLoadingUp, newCharsLoadingDown, charEnded} = this.state
+	const spinner = loading && !newCharsLoading ? <Spinner/> : null;
+	const errorMessage = error ? <Error/> : null;
+	//const charListContent = !(loading || error) ? charList : null
 
-		const charList = this.renderList(chars)
 
-		const spinner = loading ? <Spinner/> : null;
-		const errorMessage = error ? <Error/> : null;
 
-		const charListContent = !(loading || error) ? charList : null
-
-		
-
-		
-		return (
-			<div className="char__list">
-				{spinner}
-				{errorMessage}
-				{charListContent}
-				<div style ={{'display': 'flex' }}>
-					<button
-						style ={{'display': offset ? 'block' : 'none' }}
-						disabled={newCharsLoadingDown}
-						onClick={() => this.offsetDown(offset)}
-						className="button button__secondary button__long">
-						<div className="inner">load prev</div>
-					</button>
-					<button
-						style ={{'display': charEnded ? 'none' : 'block' }}
-						disabled={newCharsLoadingUp}
-						onClick={() => this.offsetUp(offset)}
-						className="button button__main button__long">
-						<div className="inner">load next</div>
-					</button>
-					
-				</div>
-				
+	return (
+		<div className="char__list">
+			{spinner}
+			{errorMessage}
+			{charList}
+			<div style ={{'display': 'flex' }}>
+				<button
+					style ={{'display': offset ? 'block' : 'none' }}
+					id='prev'
+					disabled={newCharsLoading}
+					onClick={(e) => offsetChange(offset,e)}
+					className="button button__secondary button__long">
+					<div className="inner">load prev</div>
+				</button>
+				<button
+					style ={{'display': charEnded ? 'none' : 'block' }}
+					id='next'
+					disabled={newCharsLoading}
+					onClick={(e) => offsetChange(offset,e)}
+					className="button button__main button__long">
+					<div className="inner">load next</div>
+				</button>
 			</div>
-		)
-	}
+			
+		</div>
+	)
+
 
 }
 
 CharList.propTypes ={
 	onCharSelected: PropTypes.func.isRequired
 }
-
 
 
 

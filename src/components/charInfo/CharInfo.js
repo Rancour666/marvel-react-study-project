@@ -1,7 +1,7 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import Error from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
@@ -10,88 +10,48 @@ import Skeleton from '../skeleton/Skeleton';
 import './charInfo.scss';
 
 
-class CharInfo extends Component {
-	state ={
-		char:null,
-		loading: false,
-		error: false,
-	}
-
-	marvelService = new MarvelService();
-
-	componentDidMount(){
-		this.updateCharacter()
-	}
-
-	componentDidUpdate(prevProps){
-		if(this.props.charId !== prevProps.charId){
-			this.updateCharacter()
-		}
-	}
+const CharInfo = (props) => {
+	const [char, setChar] = useState(null);
 
 
-	onCharLoaded = (char) => {
-		this.setState({
-			char: char,
-			loading:false
-		})
-	}
+	const {loading, error, getCharacter, clearError} = useMarvelService();
+
+	useEffect(()=>{
+		updateCharacter();
+
+	}, [props.charId])
 
 
-	onCharLoading = () => {
-		this.setState({
-			loading:true
-		})
-	}
 
-	onError = () => {
-		this.setState({
-			loading:false,
-			error: true
-		})
-	}
 
-	updateCharacter = () => {
-		if(!this.props.charId){
+	const updateCharacter = () => {
+		if(!props.charId){
 			return
 		}
 
-		this.onCharLoading()
-
-		this.marvelService
-			.getCharacter(this.props.charId)
-			.then(this.onCharLoaded)
-			.catch(this.onError)
-
-		this.setState({
-			error: false
-		})
+		getCharacter(props.charId)
+			.then(onCharLoaded)
 	}
 
-
-
-
-
-
-	render () {
-		const {char, loading, error} = this.state
-		
-
-		const skeleton = char || loading || error ? null : <Skeleton/>
-		const spinner = loading ? <Spinner/> : null;
-		const errorMessage = error ? <Error/> : null;
-		const charContent = !(loading || error || !char) ? <View char={char}/> : null
-		
-
-		return (
-			<div className="char__info">
-				{skeleton}
-				{spinner}
-				{errorMessage}
-				{charContent}
-			</div>
-	  )
+	
+	const onCharLoaded = (char) => {
+		setChar(char);
 	}
+
+	const skeleton = char || loading || error ? null : <Skeleton/>
+	const spinner = loading ? <Spinner/> : null;
+	const errorMessage = error ? <Error/> : null;
+	const charContent = !(loading || error || !char) ? <View char={char}/> : null
+	
+	return (
+		<div className="char__info">
+			{skeleton}
+			{spinner}
+			{errorMessage}
+			{charContent}
+		</div>
+	)
+
 
 }
 
@@ -104,7 +64,9 @@ const View = ({char}) => {
 			if(i > 9) return
 
 			return (
-				<a href ={comics.resourceURI} key={i} className="char__comics-item">{comics.name}</a>
+				<Link to={`/comics/${comics.resourceURI.replace('http://gateway.marvel.com/v1/public/comics/', '')}`}
+				 //href ={comics.resourceURI} 
+				 key={i} className="char__comics-item">{comics.name}</Link>
 			)
 			
 		})
