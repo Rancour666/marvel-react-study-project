@@ -6,7 +6,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, 225px);
         justify-content: space-between;
-        row-gap: 55px;
+        row-gap: 15px;
     }
     &__item {
         transition: 0.3s transform;
@@ -32,5 +32,26 @@
         &:hover {
             transform: translateY(-5px);
         }
+
+
+///////////////////////
+		  &-enter {
+			opacity: 0;
+			//visibility: visible;
+
+			transform: translate(-20px, -20px);
+	  }
+	  &-enter-active {
+			opacity: 0.3;
+			transform: translate(-10px, -10px);
+			transition:all 500ms ease;
+	  }
+	  &-enter-done {
+			opacity: 1;
+			transform: translate(0px, 0px);
+			transition:all 500ms ease;
+	  }
+///////////////////////
+
     }
 }

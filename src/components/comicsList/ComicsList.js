@@ -1,6 +1,6 @@
 import { useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
-
+import { CSSTransition, SwitchTransition, TransitionGroup } from 'react-transition-group';
 
 import useMarvelService from "../../services/MarvelService";
 
@@ -72,15 +72,22 @@ const ComicsList = (props) => {
 	}
 
 	const renderComicsesList = (comicses) =>{
-		const comicsesList = comicses.map(comics => {
+		const comicsesList = comicses.map((comics, i) => {
+			const delay = 300 + i*75;
 			return (
-						<li className="comics__item" key={comics.id} tabIndex ={0}>
+				<SwitchTransition mode='out-in'>
+					<CSSTransition key={comics.id} timeout={delay} classNames={"comics__item"} mountOnEnter>
+						<li tabIndex ={0}>
 							<Link to={`/comics/${comics.id}`}>
 								<img src={comics.thumbnail} alt="ultimate war" className="comics__item-img"/>
 								<div className="comics__item-name">{comics.name}</div>
 								<div className="comics__item-price">{comics.price ? comics.price + '$' : 'NOT AVAILABLE'}</div>
 							</Link>
 						</li>
+					</CSSTransition>
+				</SwitchTransition>
+
+						
 			)
 		})
 
@@ -104,7 +111,7 @@ const ComicsList = (props) => {
 			{comicsesList}
 			<div style ={{'display': 'flex','justifyContent': 'center' }}>
 				<button
-					style ={{'display': offset ? 'block' : 'none', 'margin':'45px 30px 0px 30px' }}
+					style ={{'display': offset ? 'block' : 'none', 'margin':'15px 30px 30px 30px' }}
 					id='prevComics'
 					disabled={newComicsesLoading}
 					onClick={(e) => offsetChange(offset,e)}
@@ -112,7 +119,7 @@ const ComicsList = (props) => {
 					<div className="inner">load prev</div>
 				</button>
 				<button
-					style ={{'display': comicsesEnded ? 'none' : 'block', 'margin':'45px 30px 0px 30px' }}
+					style ={{'display': comicsesEnded ? 'none' : 'block', 'margin':'15px 30px 30px 30px' }}
 					id='nextComics'
 					disabled={newComicsesLoading}
 					onClick={(e) => offsetChange(offset,e)}
