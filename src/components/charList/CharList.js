@@ -77,46 +77,45 @@ const CharList = (props) => {
 
 
 
-	const renderList = (chars) =>{
+	function renderList(chars){
 		const charList = chars.map((char, i) => {
 			const thumbStyle = char.thumbnail.includes('image_not_available') ? {objectFit:'contain'} : null;
-			const delay = 300 + i*75;
+			//const delay = 300 + i*75;
 			return (
-				<SwitchTransition mode='out-in'>
-					<CSSTransition key={char.id} timeout={delay} classNames={"char__item"} mountOnEnter>
-						<li
-							ref={(el) => (itemRefs.current[i] = el)}
-							tabIndex ={0}
-							//style={{'transition':`all ${delay}ms ease`}}
-							onClick={() => {
+				<CSSTransition key={char.id} timeout={500} classNames={"char__item"} >
+					<li
+						ref={(el) => (itemRefs.current[i] = el)}
+						tabIndex ={0}
+						//style={{'transition':`all ${delay}ms ease`}}
+						onClick={() => {
+							props.onCharSelected(char.id);
+							onFocus(i)
+						}}
+						onKeyDown={(e) => {
+							if (e.key === ' ' || e.key === "Enter") {
+								if(e.key === ' '){
+									e.preventDefault();
+								}
 								props.onCharSelected(char.id);
 								onFocus(i)
-							}}
-							onKeyDown={(e) => {
-								if (e.key === ' ' || e.key === "Enter") {
-									if(e.key === ' '){
-										e.preventDefault();
-									}
-									props.onCharSelected(char.id);
-									onFocus(i)
-								}
-							}}
-							className="char__item">
-							<img
-								style={thumbStyle}
-								src={char.thumbnail}
-								alt="abyss"/>
-							<div className="char__name">{char.name}</div>
-
-						</li>
-					</CSSTransition>
-					</SwitchTransition>
+							}
+						}}
+						className="char__item">
+						<img
+							style={thumbStyle}
+							src={char.thumbnail}
+							alt="abyss"/>
+						<div className="char__name">{char.name}</div>
+					</li>
+				</CSSTransition>
 			)
 		})
 		return (
-			<TransitionGroup component={'ul'}  className="char__grid">
-				{charList}
-			</TransitionGroup>
+			<ul className="char__grid">
+				<TransitionGroup component={null}>
+					{charList}
+				</TransitionGroup>
+			</ul>
 		)
 	}
 

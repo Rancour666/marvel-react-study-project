@@ -30,7 +30,9 @@ const RandomChar = () => {
 		const id = Math.floor(Math.random() * (1011400 - 1011000)) + 1011000;
 		getCharacter(id)
 			.then(onCharLoaded);
-		}
+	}
+
+	
 
 
 	const spinner = loading ? <Spinner/> : null;

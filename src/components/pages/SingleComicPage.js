@@ -1,61 +1,69 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+//import { useState, useEffect } from 'react';
+import {Helmet} from "react-helmet";
 
-import useMarvelService from '../../services/MarvelService';
-import Spinner from '../spinner/Spinner';
-import Error from '../errorMessage/ErrorMessage';
-import AppBanner from '../appBanner/AppBanner';
+// import useMarvelService from '../../services/MarvelService';
+// import Spinner from '../spinner/Spinner';
+// import Error from '../errorMessage/ErrorMessage';
+// import AppBanner from '../appBanner/AppBanner';
 
 import './singleComicPage.scss';
 
 
-const SingleComicPage = () => {
-	const {comicId} = useParams();
-	const [comic, setComic] = useState(null);
+// const SingleComicPage = () => {
+// 	const {comicId} = useParams();
+// 	const [comic, setComic] = useState(null);
 
-	const {loading, error, getComic, clearError} = useMarvelService();
+// 	const {loading, error, getComic, clearError} = useMarvelService();
 
-	useEffect(()=>{
-		showComic();
+// 	useEffect(()=>{
+// 		showComic();
 
-	}, [comicId])
+// 	}, [comicId])
 
-	const onComicLoaded = (comic) => {
-		setComic(comic);
-	}
+// 	const onComicLoaded = (comic) => {
+// 		setComic(comic);
+// 	}
 
 
-	const showComic = () => {
-		clearError();
+// 	const showComic = () => {
+// 		clearError();
 		
-		getComic(comicId)
-			.then(onComicLoaded)
-	}
+// 		getComic(comicId)
+// 			.then(onComicLoaded)
+// 	}
 
 
 
-	const spinner = loading ? <Spinner/> : null;
-	const errorMessage = error ? <Error/> : null;
-	const comicContent = !(loading || error || !comic) ? <View comic={comic}/> : null;
+// 	const spinner = loading ? <Spinner/> : null;
+// 	const errorMessage = error ? <Error/> : null;
+// 	const comicContent = !(loading || error || !comic) ? <View comic={comic}/> : null;
 
 
 
-    return (
-		<>
-			<AppBanner/>
-			{spinner}
-			{errorMessage}
-			{comicContent}
-		</>
+//     return (
+// 		<>
+// 			<AppBanner/>
+// 			{spinner}
+// 			{errorMessage}
+// 			{comicContent}
+// 		</>
 		
-    )
-}
+//     )
+// }
 
-const View = ({comic}) => {
-	const {name,thumbnail, pageCount, price, description, language} = comic
+const SingleComicPage = ({data}) => {
+	const {name,thumbnail, pageCount, price, description, language} = data
 
 	return (
 		<div className="single-comic">
+			<Helmet>
+					<meta
+						name="description"
+						content={`${name} comics book`}
+					/>
+					<title>{name}</title>
+			</Helmet>
 			<img src={thumbnail} alt={name} className="single-comic__img"/>
 			<div className="single-comic__info">
 				<h2 className="single-comic__name">{name}</h2>

@@ -27,6 +27,13 @@ const useMarvelService = () => {
 		return _transformCharacter(res.data.results[0])
 	}
 
+	//https://gateway.marvel.com:443/v1/public/characters?name=Thor&apikey=dc43332e01ba7f440a672d07b8902bde
+	const getCharacterByName = async (name) => {
+		const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`)
+		//return _transformCharacter(res.data.results[0])
+		return res.data.results.map(_transformCharacter);
+	}
+
 	const getAllComicses = async (offset= _baseOffset) => {
 		const res = await request(`${_apiBase}comics?${comicsesLimit}offset=${offset}&${_apiKey}`)
 		return res.data.results.map(comics => _transformComics(comics))
@@ -41,7 +48,6 @@ const useMarvelService = () => {
 
 
 	const _transformCharacter = (char) => {
-		
 		return {
 			name:char.name,
 			description: char.description ? `${char.description.slice(0, 210)}...` : 'There is no description for this character',
@@ -67,7 +73,7 @@ const useMarvelService = () => {
 		}
 	}
 
-	return {loading, error, request, clearError, getAllCharacters, getCharacter, getAllComicses, getComic}
+	return {loading, error, request, clearError, getAllCharacters, getCharacter, getAllComicses, getComic, getCharacterByName}
 
 }
 

@@ -13,13 +13,16 @@ const Page404 = lazy(() => import("../pages/404"))
 const CharactersPage = lazy(() => import("../pages/CharactersPage"))
 const ComicsPage = lazy(() => import("../pages/ComicsPage"))
 const SingleComicPage = lazy(() => import("../pages/SingleComicPage"))
+const SingleCharacterPage = lazy(() => import("../pages/SingleCharacterPage"))
+const SinglePage = lazy(() => import("../pages/SinglePage"))
 
 //import decoration from '../../resources/img/vision.png';
 
 const routes = [
 	{ path: '/', name: 'Characters', element: <CharactersPage />, nodeRef: createRef()},
 	{ path: '/comics', name: 'Comics', element: <ComicsPage />, nodeRef: createRef()},
-	{ path: '/comics/:comicId', name: 'SingleComic', element: <SingleComicPage />, nodeRef: createRef()},
+	{ path: '/comics/:id', name: 'SingleComic', element: <SinglePage Component = {SingleComicPage} dataType = "comic"/>, nodeRef: createRef()},
+	{ path: '/characters/:id', name: 'SingleCharacter', element: <SinglePage Component = {SingleCharacterPage} dataType = "character"/>, nodeRef: createRef()},
 	{ path: '*', name: '404', element: <Page404 />, nodeRef: createRef()},
 ]
 
