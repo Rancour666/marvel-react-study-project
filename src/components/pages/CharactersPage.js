@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Helmet} from "react-helmet";
 
+
 import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
@@ -9,7 +10,8 @@ import CharSearch from "../charSearch/CharSearch";
 
 
 	const CharactersPage = () => {
-		const [selectedChar, setSelectedChar] = useState(null)
+		const [selectedChar, setSelectedChar] = useState(null);
+
 
 		return (
 				<>

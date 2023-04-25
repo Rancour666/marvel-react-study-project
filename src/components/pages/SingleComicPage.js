@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
-//import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {Helmet} from "react-helmet";
+import { gsap } from 'gsap';
 
 // import useMarvelService from '../../services/MarvelService';
 // import Spinner from '../spinner/Spinner';
@@ -53,8 +54,14 @@ import './singleComicPage.scss';
 // }
 
 const SingleComicPage = ({data}) => {
-	const {name,thumbnail, pageCount, price, description, language} = data
+	const {name,thumbnail, pageCount, price, description, language} = data;
 
+	useEffect(()=>{
+		gsap.fromTo(".single-comic__img", {rotation:-5, opacity:0, x:-150} , {rotation:0,opacity:1, x:0, duration:1.6, ease: "elastic"})
+		gsap.fromTo(".single-comic__info", {rotation:5, opacity:0, x:180} , {rotation:0,opacity:1.2, x:0, duration:1.3, delay:0.2, ease: "elastic"})
+	},[])
+
+	
 	return (
 		<div className="single-comic">
 			<Helmet>

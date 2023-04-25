@@ -11,7 +11,7 @@ const useMarvelService = () => {
 
 	const _baseOffset = 0;
 
-	const {loading, error, request, clearError} = useHttp();
+	const {request, clearError, process, setProcess} = useHttp(); //FSM modification - достаем из хука так же состояние process и setProcess для передачи его в другие компонентьі. (loading, error, удаляем )
 
 
 
@@ -73,7 +73,17 @@ const useMarvelService = () => {
 		}
 	}
 
-	return {loading, error, request, clearError, getAllCharacters, getCharacter, getAllComicses, getComic, getCharacterByName}
+	return {
+		request,
+		clearError,
+		getAllCharacters,
+		getCharacter,
+		getAllComicses,
+		getComic,
+		getCharacterByName,
+		process,
+		setProcess
+	}//FSM modification - добаляем так же состояние process и setProcess для передачи его в другие компонентьі. (loading, error, удаляем )
 
 }
 

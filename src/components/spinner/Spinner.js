@@ -1,8 +1,8 @@
 import spinner from './spinner.gif'
 
-const Spinner = () =>{
+const Spinner = (prop) =>{
 	return (
-		<div style={{margin: '0 auto', alignItems: 'center', display:'flex'}}>
+		<div style={{margin: '0 auto', alignItems: 'center', display:'flex', minHeight: prop.minHeight}}>
 			<img 
 				style={{margin: '0 auto', alignItems: 'center', display:'flex'}}
 				src={spinner}

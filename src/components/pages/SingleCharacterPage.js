@@ -1,5 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
-//import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { gsap } from 'gsap';
+
 import {Helmet} from "react-helmet";
 
 // import useMarvelService from '../../services/MarvelService';
@@ -52,7 +54,14 @@ import './singleCharacterPage.scss';
 // }
 
 const SingleCharacterPage = ({data}) => {
-	const {name,thumbnail, description} = data
+	const {name,thumbnail, description} = data;
+
+	useEffect(()=>{
+		gsap.fromTo(".single-character__img", { opacity:0, y:150} , {opacity:1, y:0, duration:1.6, ease: "elastic"})
+		gsap.fromTo(".single-character__info", { opacity:0, y:180} , {opacity:1.2, y:0, duration:1.3, delay:0.2, ease: "elastic"})
+	},[])
+
+
 
 	return (
 		<div className="single-character">
@@ -68,7 +77,7 @@ const SingleCharacterPage = ({data}) => {
 				<h2 className="single-character__name">{name}</h2>
 				<p className="single-character__descr">{description}</p>
 			</div>
-			<Link to='/' className="single-character__back">Back to all</Link>
+			<Link to='/characters' className="single-character__back">Back to all</Link>
 		</div>
 		
 	)

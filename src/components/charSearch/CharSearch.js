@@ -1,18 +1,27 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { useForm } from "react-hook-form";
 import { Link } from 'react-router-dom';
+import { gsap } from 'gsap';
+
 import useMarvelService from '../../services/MarvelService';
 //import Error from '../errorMessage/ErrorMessage';
 
 import './charSearch.scss';
 
 
+
+
 const CharSearch = (props) => {
 
 	const [char, setChar] = useState(null);
 
-	const {loading, getCharacterByName, clearError} = useMarvelService();
+	const {getCharacterByName, clearError, process, setProcess} = useMarvelService();
 
+
+	useEffect(()=>{
+		gsap.fromTo('.char__search-form', {y:500, opacity:0}, {y:0, opacity:1, duration: 0.6})
+
+	}, [])
 
 	const onCharLoaded = (char) => {
 		setChar(char);
@@ -21,11 +30,13 @@ const CharSearch = (props) => {
 	const updateCharacterByName = (name) => {
 		clearError();
 		getCharacterByName(name)
-			.then(onCharLoaded);
+			.then(onCharLoaded)
+			.then(()=> setProcess('confirmed'));
 
 	}
 
 	const { register, handleSubmit, formState: { errors } } = useForm();
+
 
 
 	const results = !char ? null : char.length > 0 ? 
@@ -56,7 +67,7 @@ const CharSearch = (props) => {
 						<button 
 							type='submit' 
 							className="button button__main"
-							disabled={loading}
+							disabled={process === 'loading'}
 							>
 							<div className="inner">find</div>
 							</button>

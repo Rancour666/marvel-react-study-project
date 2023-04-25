@@ -23,6 +23,9 @@
         padding: 15px;
         cursor: pointer;
         transition: 0.3s transform;
+		  border-radius: 20px;
+		  border: 1px black solid;
+		  overflow: hidden;
         img {
             width: 200px;
             height: 200px;

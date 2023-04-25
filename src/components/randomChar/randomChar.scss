@@ -4,6 +4,9 @@
     display: grid;
     grid-template-columns: repeat(2, 50%);
     box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.25);
+	 border: 1px black solid;
+	border-radius:20px;
+	overflow: hidden;
     &__block {
         padding: 40px 35px;
         display: grid;
@@ -14,6 +17,9 @@
         width: 180px;
         height: 180px;
         object-fit: cover;
+		  //border: 1px black solid;
+		  border-radius:20px;
+		  overflow: hidden;
     }
     &__info {
         display: grid;

@@ -9,6 +9,9 @@
     &__img {
         width: 293px;
         height: 293px;
+		  border-radius: 20px;
+		  border: 1px solid black;
+		  overflow: hidden;
     }
     &__name {
         font-weight: bold;
