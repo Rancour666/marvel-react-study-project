@@ -19,7 +19,7 @@ const SinglePage = lazy(() => import("../pages/SinglePage"))
 //import decoration from '../../resources/img/vision.png';
 
 const routes = [
-	{ path: '/characters', name: 'Characters', element: <CharactersPage />, nodeRef: createRef()},
+	{ path: '/', name: 'Characters', element: <CharactersPage />, nodeRef: createRef()},
 	{ path: '/comics', name: 'Comics', element: <ComicsPage />, nodeRef: createRef()},
 	{ path: '/comics/:id', name: 'SingleComic', element: <SinglePage Component = {SingleComicPage} dataType = "comic"/>, nodeRef: createRef()},
 	{ path: '/characters/:id', name: 'SingleCharacter', element: <SinglePage Component = {SingleCharacterPage} dataType = "character"/>, nodeRef: createRef()},

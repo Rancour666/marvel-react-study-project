@@ -89,7 +89,8 @@ const View = ({data}) => {
 				<p className="randomchar__name">{name}</p>
 				<p className="randomchar__descr">{description}</p>
 				<div className="randomchar__btns">
-					<Link to={`/characters/${id}`} href={homepage} className="button button__main">
+					<Link
+						 to={`/characters/${id}`} href={homepage} className="button button__main">
 						<div className="inner">homepage</div>
 					</Link>
 					<a href={wiki} className="button button__secondary">

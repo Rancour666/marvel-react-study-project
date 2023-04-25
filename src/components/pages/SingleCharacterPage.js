@@ -77,7 +77,7 @@ const SingleCharacterPage = ({data}) => {
 				<h2 className="single-character__name">{name}</h2>
 				<p className="single-character__descr">{description}</p>
 			</div>
-			<Link to='/characters' className="single-character__back">Back to all</Link>
+			<Link to='/' className="single-character__back">Back to all</Link>
 		</div>
 		
 	)
